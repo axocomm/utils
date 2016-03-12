@@ -1,0 +1,62 @@
+#!/bin/bash
+
+set -e
+
+usage() {
+    cat <<EOF
+Usage: `basename $0` <action> [-p profile] [-c config]
+EOF
+}
+
+die() {
+    local msg=$1
+    echo "$msg" >&2
+    exit 1
+}
+
+start-or-attach() {
+    local tmuxp=$1
+    local config=$2
+
+    $tmuxp load -y $config
+}
+
+tmuxp=$(which tmuxp)
+[ -n "$tmuxp" -a -x "$tmuxp" ] || die 'tmuxp was not found'
+
+config_dir=$HOME/.tmuxp
+profile=default
+session_name=$(basename $PWD)
+
+while getopts 'c:n:' opt; do
+    case $opt in
+        c)
+            config_dir=$OPTARG
+            ;;
+        n)
+            session_name=$OPTARG
+            ;;
+        *)
+            usage
+            ;;
+    esac
+done
+
+shift $((OPTIND - 1))
+
+if [ -n "$1" ]; then
+    profile=$1
+fi
+
+config="$config_dir/$profile.json"
+
+if [ -n "$session_name" ]; then
+    export SESSION_NAME="$session_name"
+fi
+
+[ -d "$config_dir" ] || die "Configuration directory $config_dir does not exist"
+[ -e "$config" ] || die "Could not find profile $profile"
+
+start-or-attach $tmuxp $config
+
+exit
