@@ -1,0 +1,30 @@
+{
+  "session_name": "${SESSION_NAME}",
+  "windows": [
+    {
+      "window_name": "editor",
+      "panes": [null],
+      "window_index": 0
+    },
+    {
+      "window_name": "build",
+      "panes": [null],
+      "window_index": 1
+    },
+    {
+      "window_name": "admin",
+      "panes": [null],
+      "window_index": 2
+    },
+    {
+      "window_name": "services",
+      "panes": [null],
+      "window_index": 3
+    },
+    {
+      "window_name": "db",
+      "panes": [null],
+      "window_index": 6
+    }
+  ]
+}
