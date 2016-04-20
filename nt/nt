@@ -25,7 +25,7 @@ tmuxp=$(which tmuxp)
 [ -n "$tmuxp" -a -x "$tmuxp" ] || die 'tmuxp was not found'
 
 config_dir=$HOME/.tmuxp
-profile=default
+profile=basic
 session_name=$(basename $PWD)
 
 while getopts 'c:n:' opt; do
