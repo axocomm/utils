@@ -15,7 +15,7 @@ die() {
     exit 1
 }
 
-start-or-attach() {
+start_or_attach() {
     local tmuxp=$1
     local config=$2
 
@@ -63,7 +63,8 @@ fi
 
 [ -d "$config_dir" ] || die "Configuration directory $config_dir does not exist"
 [ -e "$config" ] || die "Could not find profile $profile"
+[ -z "$TMUX" ] || die 'Already in a tmux session'
 
-start-or-attach $tmuxp $config
+start_or_attach $tmuxp $config
 
 exit
