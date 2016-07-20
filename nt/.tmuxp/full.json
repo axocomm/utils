@@ -7,24 +7,19 @@
       "window_index": 0
     },
     {
-      "window_name": "build",
+      "window_name": "shell",
       "panes": [null],
       "window_index": 1
     },
     {
-      "window_name": "shell",
+      "window_name": "services",
       "panes": [null],
       "window_index": 2
     },
     {
-      "window_name": "services",
-      "panes": [null],
-      "window_index": 3
-    },
-    {
       "window_name": "db",
       "panes": [null],
-      "window_index": 4
+      "window_index": 3
     }
   ]
 }
