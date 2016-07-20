@@ -14,7 +14,7 @@ Usage: `basename $0` [-v] [-f file] [-l label]
 EOF
 }
 
-comment-hosts() {
+comment_hosts() {
     local file="$1"
     local label="$2"
 
@@ -23,7 +23,7 @@ comment-hosts() {
     sed -i '.orig' "$sed_cmd" $file
 }
 
-uncomment-hosts() {
+uncomment_hosts() {
     local file="$1"
     local label="$2"
 
@@ -32,15 +32,15 @@ uncomment-hosts() {
     sed -i '.orig' "$sed_cmd" $file
 }
 
-get-fn() {
+get_fn() {
     local file="$1"
     local label="$2"
     local search="$(printf '%s$' $label)"
 
     if grep -E $search $file | grep -qsE '^#'; then
-        echo uncomment-hosts
+        echo uncomment_hosts
     else
-        echo comment-hosts
+        echo comment_hosts
     fi
 }
 
@@ -68,7 +68,7 @@ done
 
 shift $((OPTIND - 1))
 
-FN=`get-fn $FILE "$LABEL"`
+FN=`get_fn $FILE "$LABEL"`
 
 $FN $FILE "$LABEL"
 
