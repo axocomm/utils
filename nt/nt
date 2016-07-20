@@ -6,6 +6,7 @@ usage() {
     cat <<EOF
 Usage: `basename $0` <action> [-p profile] [-c config]
 EOF
+    exit 1
 }
 
 die() {
@@ -21,6 +22,11 @@ start-or-attach() {
     $tmuxp load -y $config
 }
 
+list_profiles() {
+    local dir=$1
+    ls -1 $dir/*.json | sed -e 's|^.*/||' -e 's/\.json$//'
+}
+
 tmuxp=$(which tmuxp)
 [ -n "$tmuxp" -a -x "$tmuxp" ] || die 'tmuxp was not found'
 
@@ -28,7 +34,7 @@ config_dir=$HOME/.tmuxp
 profile=basic
 session_name=$(basename $PWD)
 
-while getopts 'c:n:' opt; do
+while getopts 'c:n:hl' opt; do
     case $opt in
         c)
             config_dir=$OPTARG
@@ -36,7 +42,11 @@ while getopts 'c:n:' opt; do
         n)
             session_name=$OPTARG
             ;;
-        *)
+        l)
+            list_profiles $config_dir
+            exit
+            ;;
+        h|*)
             usage
             ;;
     esac
