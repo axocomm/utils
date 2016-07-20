@@ -31,7 +31,6 @@ tmuxp=$(which tmuxp)
 [ -n "$tmuxp" -a -x "$tmuxp" ] || die 'tmuxp was not found'
 
 config_dir=$HOME/.tmuxp
-profile=basic
 session_name=$(basename $PWD)
 
 while getopts 'c:n:hl' opt; do
@@ -54,9 +53,7 @@ done
 
 shift $((OPTIND - 1))
 
-if [ -n "$1" ]; then
-    profile=$1
-fi
+profile="${1:-basic}"
 
 config="$config_dir/$profile.json"
 
