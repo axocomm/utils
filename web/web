@@ -7,13 +7,13 @@ ACTION=run_web
 
 usage() {
     cat <<EOF
-Usage: `basename $0` [-p port] [stop] [name]
+Usage: `basename $0` [-p port] [stop|list] [name]
 EOF
     exit 1
 }
 
 run_web() {
-    local name=$1
+    local name="${1}-web"
     docker run \
            -d \
            -p $HOST_PORT:80 \
@@ -23,7 +23,12 @@ run_web() {
 }
 
 stop_web() {
-    docker stop $1 >/dev/null && docker rm $1 >/dev/null
+    local name="${1}-web"
+    docker stop $name >/dev/null && docker rm $name >/dev/null
+}
+
+list_web() {
+    docker ps | grep -- '-web' | awk '{ print $1, $NF }'
 }
 
 while getopts 'p:' opt; do
@@ -39,13 +44,21 @@ done
 
 shift $((OPTIND - 1))
 
-# First argument is hopefully 'stop'
-if [ "${1:-}" == stop ]; then
-    ACTION=stop_web
-    shift
-fi
+action="${1:-}"
+
+case $action in
+    stop)
+        ACTION=stop_web
+        shift
+        ;;
+    list)
+        ACTION=list_web
+        shift
+        ;;
+esac
 
 name="${1:-$(basename `pwd`)}"
+name="${name//-web/}"
 
 $ACTION $name
 
