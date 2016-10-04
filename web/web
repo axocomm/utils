@@ -28,7 +28,14 @@ stop_web() {
 }
 
 list_web() {
-    docker ps | grep -- '-web' | awk '{ print $1, $NF }'
+    {
+        echo 'ID Port Name'
+        echo '-- ---- ----'
+        docker ps | \
+            grep -- '-web' | \
+            awk '{ print $1, $(NF - 1), $NF }' | \
+            sed -e 's/0\.0\.0\.0://' -e 's|\->80/tcp||'
+    } | column -t
 }
 
 while getopts 'p:' opt; do
