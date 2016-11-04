@@ -1,0 +1,32 @@
+#!/bin/bash
+
+set -exu
+
+BINDIR=$HOME/bin
+
+do_install() {
+    [ -d $BINDIR ]     || mkdir $BINDIR
+    [ -e $BINDIR/hue ] || ln -s $PWD/hue $BINDIR/hue
+    [ -x $BINDIR/hue ] || chmod +x $BINDIR/hue
+}
+
+do_uninstall() {
+    [ -e $BINDIR/hue ] && rm $BINDIR/hue
+}
+
+action=do_install
+while getopts 'u' opt; do
+    case $opt in
+        u)
+            action=do_uninstall
+            ;;
+        *)
+            ;;
+    esac
+done
+
+shift $((OPTIND - 1))
+
+$action
+
+exit $?

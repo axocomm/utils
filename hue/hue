@@ -1,0 +1,110 @@
+#!/bin/bash
+
+source hue.cfg
+
+usage() {
+    cat <<EOF
+Usage: `basename $0` [-h host] [-u username] command [options]
+
+Commands:
+    status
+    power [id]
+    power [id] [on|off]
+    scene [id] [brightness]
+EOF
+    exit 1
+}
+
+die() {
+    local msg="$1"
+    echo $msg >&2
+    exit 1
+}
+
+api_url() {
+    local suffix="$1"
+    printf 'http://%s/api/%s/%s' $HOST $USERNAME $suffix
+}
+
+get_status() {
+    curl `api_url lights`
+}
+
+get_power() {
+    local light="$1"
+    local url="$(api_url lights/$light)"
+    curl $url | jq .state.on
+}
+
+set_power() {
+    local light="$1"
+    local state="$2"
+    local url="$(api_url lights/$light/state)"
+
+    case $state in
+        on)
+            data='{"on": true}'
+            ;;
+        off)
+            data='{"on": false}'
+            ;;
+        *)
+            die "Invalid state $state"
+            ;;
+    esac
+
+    curl -XPUT -d "$data" $url
+}
+
+set_scene() {
+    local light="$1"
+    local bri="${2:-254}"
+    local url="$(api_url lights/$light/state)"
+
+    local data="{\"on\": true, \"bri\": $bri}"
+    curl -XPUT -d "$data" $url
+}
+
+while getopts 'u:h:' opt; do
+    case $opt in
+        u)
+            USERNAME=$OPTARG
+            ;;
+        h)
+            HOST=$OPTARG
+            ;;
+        *)
+            usage
+            ;;
+    esac
+done
+
+shift $((OPTIND - 1))
+
+[[ $# -ge 1 ]] || usage
+
+command="$1"
+shift
+case $command in
+    status)
+        get_status
+        ;;
+    power)
+        light="$1"
+        state="$2"
+        [[ -n "$light" ]] || die 'Missing required light parameter'
+        if [ -z "$state" ]; then
+            get_power $light
+        else
+            set_power $light $state
+        fi
+        ;;
+    scene)
+        set_scene $@
+        ;;
+    *)
+        usage
+        ;;
+esac
+
+exit $?
