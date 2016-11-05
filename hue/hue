@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source hue.cfg
+source $HOME/.huerc
 
 usage() {
     cat <<EOF
@@ -27,7 +27,10 @@ api_url() {
 }
 
 get_status() {
-    curl `api_url lights`
+    local light="$1"
+    local suffix='lights'
+    [[ -n "$light" ]] && suffix="${suffix}/${light}"
+    curl `api_url $suffix` | jq .
 }
 
 get_power() {
@@ -87,7 +90,7 @@ command="$1"
 shift
 case $command in
     status)
-        get_status
+        get_status $1
         ;;
     power)
         light="$1"
