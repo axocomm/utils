@@ -6,6 +6,7 @@ require 'open-uri'
 require 'json'
 
 CONFIG = "#{Dir.pwd}/tracking.yml"
+USER_AGENT = 'Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_3 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8J2 Safari/6533.18.5'
 CARRIERS = {
   :dhl => {
     :url_format => 'http://webtrack.dhlglobalmail.com/?trackingnumber=%s',
@@ -52,7 +53,7 @@ def track(config, name)
   end
 
   url = CARRIERS[carrier][:url_format] % [number]
-  h = Nokogiri::HTML(open(url))
+  h = Nokogiri::HTML(open(url, 'User-Agent' => USER_AGENT))
   CARRIERS[carrier][:parser].(h).to_json
 end
 
