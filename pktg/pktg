@@ -1,0 +1,60 @@
+#!/usr/bin/env ruby
+
+require 'yaml'
+require 'nokogiri'
+require 'open-uri'
+require 'json'
+
+CONFIG = "#{Dir.pwd}/tracking.yml"
+CARRIERS = {
+  :dhl => {
+    :url_format => 'http://webtrack.dhlglobalmail.com/?trackingnumber=%s',
+    :parser     => ->(h) {
+      est = h.css('.est-delivery > p')[0].content
+      timeline = h.css('.timeline-last > .timeline-unit')
+
+      last_loc = timeline.css('.timeline-location')[0]
+      last_loc = last_loc.content.gsub(/^\W+/, '').gsub(/\W+$/, '')
+
+      last_status = timeline.css('.timeline-description')[0]
+      last_status = last_status.content
+
+      {
+        :estimate      => est,
+        :last_location => last_loc,
+        :last_status   => last_status
+      }
+    }
+  }
+}
+
+def get_config
+  File.open(CONFIG) do |fh|
+    YAML.load(fh.read)
+  end
+end
+
+def package_info(packages, name)
+  packages.detect { |p| p['name'] == name }
+end
+
+def track(config, name)
+  info = package_info config['packages'], name
+  if info.nil?
+    fail "Could not find package '#{name}'"
+  end
+
+  carrier = info['carrier'].to_sym
+  number = info['number']
+
+  if not CARRIERS.include?(carrier.to_sym)
+    fail "Don't know how to track '#{info['carrier']}'"
+  end
+
+  url = CARRIERS[carrier][:url_format] % [number]
+  h = Nokogiri::HTML(open(url))
+  CARRIERS[carrier][:parser].(h).to_json
+end
+
+$config = get_config or fail "Could not get config"
+puts track($config, ARGV[0])
