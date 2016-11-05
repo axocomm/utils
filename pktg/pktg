@@ -51,26 +51,33 @@ def get_config
   end
 end
 
+def get(url)
+  open(url, 'User-Agent' => USER_AGENT)
+end
+
 def package_info(packages, name)
-  packages.detect { |p| p['name'] == name }
+  package = packages.detect { |p| p['name'] == name }
+  fail "Could not find package '#{name}'" if package.nil?
+
+  carrier = package['carrier'].to_sym
+  fail "Don't know how to track '#{carrier}'" unless CARRIERS.include?(carrier)
+
+  number = package['number']
+  url = CARRIERS[carrier][:url_format] % [number]
+
+  parser = CARRIERS[carrier][:parser]
+
+  {
+    :package => package,
+    :url     => url,
+    :parser  => parser
+  }
 end
 
 def track(config, name)
-  info = package_info config['packages'], name
-  if info.nil?
-    fail "Could not find package '#{name}'"
-  end
-
-  carrier = info['carrier'].to_sym
-  number = info['number']
-
-  if not CARRIERS.include?(carrier.to_sym)
-    fail "Don't know how to track '#{info['carrier']}'"
-  end
-
-  url = CARRIERS[carrier][:url_format] % [number]
-  h = Nokogiri::HTML(open(url, 'User-Agent' => USER_AGENT))
-  CARRIERS[carrier][:parser].(h).to_json
+  params = package_info(config['packages'], name)
+  h = Nokogiri::HTML(get(params[:url]))
+  params[:parser].(h).to_json
 end
 
 $config = get_config or fail "Could not get config"
