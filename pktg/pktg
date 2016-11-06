@@ -36,8 +36,11 @@ CARRIERS = {
                     .gsub(/,([^\W])/, ', \1')
       last_status = details.css('.status p')[0].content
 
+      estimate = h.css('.tracking-progress div:last-child li:last-child .value')
+      estimate = estimate.nil? ? 'unknown' : trim.(estimate[0].content)
+
       {
-        :estimate    => 'TODO',
+        :estimate    => estimate,
         :last_date   => trim.(last_date),
         :last_status => trim.(last_status)
       }
