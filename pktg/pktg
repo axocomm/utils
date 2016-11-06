@@ -75,10 +75,14 @@ def package_info(packages, name)
 end
 
 def track(config, name)
-  params = package_info(config['packages'], name)
-  h = Nokogiri::HTML(get(params[:url]))
-  params[:parser].(h).merge(params).to_json
+  names = name ? [name] : config['packages'].map { |x| x['name'] }
+  names.inject({}) do |acc, n|
+    params = package_info(config['packages'], n)
+    h = Nokogiri::HTML(get(params[:url]))
+    acc[n] = params[:parser].(h).merge(params)
+    acc
+  end
 end
 
 $config = get_config or fail "Could not get config"
-puts track($config, ARGV[0])
+puts track($config, ARGV[0]).to_json
