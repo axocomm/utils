@@ -77,7 +77,7 @@ end
 def track(config, name)
   params = package_info(config['packages'], name)
   h = Nokogiri::HTML(get(params[:url]))
-  params[:parser].(h).to_json
+  params[:parser].(h).merge(params).to_json
 end
 
 $config = get_config or fail "Could not get config"
