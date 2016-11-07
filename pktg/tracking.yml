@@ -6,3 +6,6 @@ packages:
   - name: hoodie-usps
     carrier: usps
     number: 9361269903501252195662
+  - name: pacman
+    carrier: usps
+    number: 9405509699937041654650
