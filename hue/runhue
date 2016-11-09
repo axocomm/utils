@@ -1,0 +1,56 @@
+#!/usr/bin/env ruby
+
+def eval_cmd(cmd)
+  args = (cmd[:args] or []).join(' ')
+  num = (cmd[:num] or '')
+  c = [cmd[:cmd], num, args].join(' ')
+  `hue #{c}`.chomp
+end
+
+def parse_cmd(line)
+  if m = /^ *([a-z]+) (\d+)( (.*))?$/.match(line)
+    {
+      :cmd  => m[1],
+      :num  => m[2],
+      :args => (m[-1] or '').split(/ +/)
+    }
+  end
+end
+
+# TODO: split
+def eval_if(line)
+  if m = /^if ([a-z]+) (\d+) ([a-z]+)$/.match(line)
+    cmd = {
+      :cmd => m[1],
+      :num => m[2].to_s
+    }
+
+    eval_cmd(cmd) == m[3]
+  else
+    fail 'Malformed if'
+  end
+end
+
+out = ARGF.readlines.map(&:chomp).inject({:if => true}) do |env, line|
+  case
+  when /^if/.match(line)
+    env[:block] = :if
+    env[:if] = eval_if(line)
+  when /^else/.match(line)
+    fail 'else outside an if block' if env[:block] != :if
+    env[:block] = :else
+    env[:if] = !env[:if]
+  when /^end$/.match(line)
+    env[:block] = nil
+    env[:if] = true
+  else
+    if env[:if] != false
+      cmd = parse_cmd(line)
+      env[:result] = eval_cmd(cmd)
+    end
+  end
+
+  env
+end
+
+puts out[:result]

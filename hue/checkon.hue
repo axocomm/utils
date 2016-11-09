@@ -1,0 +1,3 @@
+if power 1 false
+  power 1 on
+end
