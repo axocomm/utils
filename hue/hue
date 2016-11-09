@@ -56,7 +56,12 @@ set_power() {
             ;;
     esac
 
-    curl -XPUT -d "$data" $url
+    curl --silent -XPUT -d "$data" $url
+}
+
+get_scene() {
+    local light="$1"
+    get_status "$light" | jq .state.bri
 }
 
 set_scene() {
@@ -65,7 +70,7 @@ set_scene() {
     local url="$(api_url lights/$light/state)"
 
     local data="{\"on\": true, \"bri\": $bri}"
-    curl -XPUT -d "$data" $url
+    curl --silent -XPUT -d "$data" $url
 }
 
 while getopts 'u:h:' opt; do
@@ -103,7 +108,14 @@ case $command in
         fi
         ;;
     scene)
-        set_scene $@
+        light="$1"
+        bri="$2"
+        [[ -n "$light" ]] || die 'Missing required light parameter'
+        if [ -z "$bri" ]; then
+            get_scene $light
+        else
+            set_scene $light $bri
+        fi
         ;;
     *)
         usage
