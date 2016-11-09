@@ -30,13 +30,13 @@ get_status() {
     local light="$1"
     local suffix='lights'
     [[ -n "$light" ]] && suffix="${suffix}/${light}"
-    curl `api_url $suffix` | jq .
+    curl --silent `api_url $suffix` | jq .
 }
 
 get_power() {
     local light="$1"
     local url="$(api_url lights/$light)"
-    curl $url | jq .state.on
+    curl --silent $url | jq .state.on
 }
 
 set_power() {
