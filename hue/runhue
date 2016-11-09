@@ -4,6 +4,7 @@ def eval_cmd(cmd)
   args = (cmd[:args] or []).join(' ')
   num = (cmd[:num] or '')
   c = [cmd[:cmd], num, args].join(' ')
+  puts "hue #{c}" if ENV['DEBUG']
   `hue #{c}`.chomp
 end
 
@@ -19,7 +20,7 @@ end
 
 # TODO: split
 def eval_if(line)
-  if m = /^if ([a-z]+) (\d+) ([a-z]+)$/.match(line)
+  if m = /^if ([a-z]+) (\d+) ([^ ]+)$/.match(line)
     cmd = {
       :cmd => m[1],
       :num => m[2].to_s
