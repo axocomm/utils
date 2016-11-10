@@ -8,9 +8,13 @@ Usage: `basename $0` [-h host] [-u username] command [options]
 
 Commands:
     status
+
     power [id]
     power [id] [on|off]
+
     scene [id] [brightness]
+
+    run [script]
 EOF
     exit 1
 }
@@ -73,6 +77,18 @@ set_scene() {
     curl --silent -XPUT -d "$data" $url
 }
 
+run_script() {
+    local script="$1"
+
+    local realpath=$(dirname $(readlink $0))
+    local script_dir=$realpath/scripts
+    local script_file=$script_dir/${script}.hue
+    [[ -e "$script_file" ]] || die "Script $script doesn't exist"
+
+    local runhue=$realpath/runhue
+    $runhue < $script_file
+}
+
 while getopts 'u:h:' opt; do
     case $opt in
         u)
@@ -116,6 +132,12 @@ case $command in
         else
             set_scene $light $bri
         fi
+        ;;
+    run)
+        script="$1"
+        [[ -n "$script" ]] || die 'Missing script parameter'
+
+        run_script $script
         ;;
     *)
         usage
