@@ -5,7 +5,7 @@ def eval_cmd(cmd)
   num = (cmd[:num] or '')
   c = [cmd[:cmd], num, args].join(' ')
   puts "hue #{c}" if ENV['DEBUG']
-  `hue #{c}`.chomp
+  `hue #{c}`.chomp unless ENV['DEBUG']
 end
 
 def parse_cmd(line)
@@ -20,13 +20,17 @@ end
 
 # TODO: split
 def eval_if(line)
-  if m = /^if ([a-z]+) (\d+) ([^ ]+)$/.match(line)
+  if m = /^if (not *)?([a-z]+) (\d+) ([^ ]+)$/.match(line)
     cmd = {
-      :cmd => m[1],
-      :num => m[2].to_s
+      :cmd => m[2],
+      :num => m[3].to_s
     }
 
-    eval_cmd(cmd) == m[3]
+    if m[1].nil?
+      eval_cmd(cmd) == m[4]
+    else
+      eval_cmd(cmd) != m[4]
+    end
   else
     fail 'Malformed if'
   end
