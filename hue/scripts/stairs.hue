@@ -1,0 +1,5 @@
+if scene 1 250
+  scene 1 70
+else
+  scene 1 250
+end

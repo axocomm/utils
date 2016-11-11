@@ -1,11 +1,5 @@
 ---
 packages:
-  - name: hoodie
-    carrier: dhl
-    number: 9361269903501252195662
-  - name: hoodie-usps
+  - name: keyboard
     carrier: usps
-    number: 9361269903501252195662
-  - name: pacman
-    carrier: usps
-    number: 9405509699937041654650
+    number: 13152330000032202067

@@ -1,0 +1,5 @@
+if power 1 true
+  power 1 off
+else
+  power 1 on
+end

@@ -8,9 +8,13 @@ Usage: `basename $0` [-h host] [-u username] command [options]
 
 Commands:
     status
+
     power [id]
     power [id] [on|off]
+
     scene [id] [brightness]
+
+    run [script]
 EOF
     exit 1
 }
@@ -30,13 +34,13 @@ get_status() {
     local light="$1"
     local suffix='lights'
     [[ -n "$light" ]] && suffix="${suffix}/${light}"
-    curl `api_url $suffix` | jq .
+    curl --silent `api_url $suffix` | jq .
 }
 
 get_power() {
     local light="$1"
     local url="$(api_url lights/$light)"
-    curl $url | jq .state.on
+    curl --silent $url | jq .state.on
 }
 
 set_power() {
@@ -56,7 +60,12 @@ set_power() {
             ;;
     esac
 
-    curl -XPUT -d "$data" $url
+    curl --silent -XPUT -d "$data" $url
+}
+
+get_scene() {
+    local light="$1"
+    get_status "$light" | jq .state.bri
 }
 
 set_scene() {
@@ -65,7 +74,19 @@ set_scene() {
     local url="$(api_url lights/$light/state)"
 
     local data="{\"on\": true, \"bri\": $bri}"
-    curl -XPUT -d "$data" $url
+    curl --silent -XPUT -d "$data" $url
+}
+
+run_script() {
+    local script="$1"
+
+    local realpath=$(dirname $(readlink $0))
+    local script_dir=$realpath/scripts
+    local script_file=$script_dir/${script}.hue
+    [[ -e "$script_file" ]] || die "Script $script doesn't exist"
+
+    local runhue=$realpath/runhue
+    $runhue < $script_file
 }
 
 while getopts 'u:h:' opt; do
@@ -103,7 +124,20 @@ case $command in
         fi
         ;;
     scene)
-        set_scene $@
+        light="$1"
+        bri="$2"
+        [[ -n "$light" ]] || die 'Missing required light parameter'
+        if [ -z "$bri" ]; then
+            get_scene $light
+        else
+            set_scene $light $bri
+        fi
+        ;;
+    run)
+        script="$1"
+        [[ -n "$script" ]] || die 'Missing script parameter'
+
+        run_script $script
         ;;
     *)
         usage

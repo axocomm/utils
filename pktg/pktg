@@ -5,12 +5,13 @@ require 'nokogiri'
 require 'open-uri'
 require 'json'
 
-CONFIG = "#{Dir.pwd}/tracking.yml"
+DIR=File.dirname(File.readlink($0))
+CONFIG = "#{DIR}/tracking.yml"
 USER_AGENT = 'Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_3 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8J2 Safari/6533.18.5'
 CARRIERS = {
   :dhl => {
     :url_format => 'http://webtrack.dhlglobalmail.com/?trackingnumber=%s',
-    :parser     => ->(h) {
+    :scraper    => ->(h) {
       est = h.css('.est-delivery > p')[0].content
       timeline = h.css('.timeline-last > .timeline-unit')
 
@@ -29,7 +30,7 @@ CARRIERS = {
   },
   :usps => {
     :url_format => 'https://tools.usps.com/go/TrackConfirmAction_input?origTrackNum=%s',
-    :parser     => ->(h) {
+    :scraper    => ->(h) {
       details = h.css('.latest-detail')[0]
       trim = ->(s) { s.gsub(/^\s+/, '').gsub(/\s+$/, '').gsub(/\n/, '') }
       last_date = details.css('.date-time p')[0].content
@@ -68,12 +69,12 @@ def package_info(packages, name)
   number = package['number']
   url = CARRIERS[carrier][:url_format] % [number]
 
-  parser = CARRIERS[carrier][:parser]
+  scraper = CARRIERS[carrier][:scraper]
 
   {
     :package => package,
     :url     => url,
-    :parser  => parser
+    :scraper  => scraper
   }
 end
 
@@ -82,7 +83,7 @@ def track(config, name)
   names.inject({}) do |acc, n|
     params = package_info(config['packages'], n)
     h = Nokogiri::HTML(get(params[:url]))
-    acc[n] = params[:parser].(h).merge(params)
+    acc[n] = params[:scraper].(h).merge(params)
     acc
   end
 end
