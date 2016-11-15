@@ -105,9 +105,7 @@ done
 
 shift $((OPTIND - 1))
 
-[[ $# -ge 1 ]] || usage
-
-command="$1"
+command="${1:-status}"
 shift
 case $command in
     status)
