@@ -1,0 +1,36 @@
+#!/usr/bin/env ruby
+
+require 'json'
+
+def get_config(file)
+  File.open(file) do |fh|
+    result = fh.readlines.reject do |line|
+      /^ *#/.match(line) || /^ *$/.match(line)
+    end.map do |line|
+      line.gsub(/^ */, '').gsub(/ *$/, '')
+    end.inject({:hosts => {}, :host => nil, :errors => []}) do |acc, line|
+      host = acc[:host]
+      case
+      when m = /^host ([a-z0-9\.]+)$/i.match(line)
+        host = m[1]
+        acc[:host] = host
+        acc[:hosts][host] = {}
+      when m = /^([A-Za-z]+)  *(.+)$/.match(line)
+        fail 'No host' if acc[:host].nil?
+        key = m[1]
+        val = m[2]
+        acc[:hosts][host][key.downcase] = val
+      else
+        acc[:errors] << line
+      end
+
+      acc
+    end
+
+    result.delete(:host)
+    result
+  end
+end
+
+file = ARGV[0] || "#{Dir.home}/.ssh/config"
+puts get_config(file).to_json
