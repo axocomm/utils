@@ -4,7 +4,7 @@ set -e
 
 usage() {
     cat <<EOF
-Usage: `basename $0` <action> [-p profile] [-c config]
+Usage: `basename $0` [profile] [-c config] [-n name] [-l]
 EOF
     exit 1
 }
