@@ -53,7 +53,7 @@ done
 
 shift $((OPTIND - 1))
 
-profile="${1:-basic}"
+profile="${1:-default}"
 
 config="$config_dir/$profile.json"
 

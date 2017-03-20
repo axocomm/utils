@@ -10,11 +10,6 @@
       "window_name": "shell",
       "panes": [null],
       "window_index": 1
-    },
-    {
-      "window_name": "services",
-      "panes": [null],
-      "window_index": 2
-    }
+    } 
   ]
 }
