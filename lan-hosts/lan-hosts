@@ -6,7 +6,7 @@ FN=
 VERBOSE=
 
 usage() {
-    cat <<EOF
+  cat <<EOF
 Usage: `basename $0` [-v] [-f file] [-l label]
     -v :: print debug messages
     -f :: the file to update (default /etc/hosts)
@@ -15,55 +15,55 @@ EOF
 }
 
 comment_hosts() {
-    local file="$1"
-    local label="$2"
+  local file="$1"
+  local label="$2"
 
-    local sed_cmd="$(printf '/# %s$/ s/^/# /g' $label)"
-    [ $VERBOSE ] && echo "Commenting hosts in $file with $sed_cmd"
-    sed -i '.orig' "$sed_cmd" $file
+  local sed_cmd="$(printf '/# %s$/ s/^/# /g' $label)"
+  [ $VERBOSE ] && echo "Commenting hosts in $file with $sed_cmd"
+  sed -i '.orig' "$sed_cmd" $file
 }
 
 uncomment_hosts() {
-    local file="$1"
-    local label="$2"
+  local file="$1"
+  local label="$2"
 
-    local sed_cmd="$(printf '/# %s$/ s/^# //g' $label)"
-    [ $VERBOSE ] && echo "Uncommenting hosts in $file with $sed_cmd"
-    sed -i '.orig' "$sed_cmd" $file
+  local sed_cmd="$(printf '/# %s$/ s/^# //g' $label)"
+  [ $VERBOSE ] && echo "Uncommenting hosts in $file with $sed_cmd"
+  sed -i '.orig' "$sed_cmd" $file
 }
 
 get_fn() {
-    local file="$1"
-    local label="$2"
-    local search="$(printf '%s$' $label)"
+  local file="$1"
+  local label="$2"
+  local search="$(printf '%s$' $label)"
 
-    if grep -E $search $file | grep -qsE '^#'; then
-        echo uncomment_hosts
-    else
-        echo comment_hosts
-    fi
+  if grep -E $search $file | grep -qsE '^#'; then
+    echo uncomment_hosts
+  else
+    echo comment_hosts
+  fi
 }
 
 while getopts 'f:l:vh' opt; do
-    case $opt in
-        f)
-            FILE=$OPTARG
-            ;;
-        l)
-            LABEL=$OPTARG
-            ;;
-        v)
-            VERBOSE=0
-            ;;
-        h)
-            usage
-            exit 0
-            ;;
-        *)
-            usage
-            exit 2
-            ;;
-    esac
+  case $opt in
+    f)
+      FILE=$OPTARG
+      ;;
+    l)
+      LABEL=$OPTARG
+      ;;
+    v)
+      VERBOSE=0
+      ;;
+    h)
+      usage
+      exit 0
+      ;;
+    *)
+      usage
+      exit 2
+      ;;
+  esac
 done
 
 shift $((OPTIND - 1))

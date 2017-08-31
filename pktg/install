@@ -10,26 +10,26 @@ CONFIG_FILE=$HOME/tracking.yml
 # for the bin directory and perform the installs (or just
 # have it call these individual ones)
 do_install() {
-    [ -d $BINDIR ]      || mkdir $BINDIR
-    [ -e $BINDIR/pktg ] || ln -s $PWD/pktg $BINDIR/pktg
-    [ -x $BINDIR/pktg ] || chmod +x $BINDIR/pktg
-    [ -e $CONFIG_FILE ] || ln -s $PWD/tracking.yml $CONFIG_FILE
+  [ -d $BINDIR ]      || mkdir $BINDIR
+  [ -e $BINDIR/pktg ] || ln -s $PWD/pktg $BINDIR/pktg
+  [ -x $BINDIR/pktg ] || chmod +x $BINDIR/pktg
+  [ -e $CONFIG_FILE ] || ln -s $PWD/tracking.yml $CONFIG_FILE
 }
 
 do_uninstall() {
-    [ -e $BINDIR/pktg ] && rm $BINDIR/pktg
-    [ -e $CONFIG_FILE ] && rm $CONFIG_FILE
+  [ -e $BINDIR/pktg ] && rm $BINDIR/pktg
+  [ -e $CONFIG_FILE ] && rm $CONFIG_FILE
 }
 
 action=do_install
 while getopts 'u' opt; do
-    case opt in
-        u)
-            action=do_uninstall
-            ;;
-        *)
-            ;;
-    esac
+  case opt in
+    u)
+      action=do_uninstall
+      ;;
+    *)
+      ;;
+  esac
 done
 
 shift $((OPTIND - 1))
