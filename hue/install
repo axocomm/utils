@@ -6,26 +6,26 @@ BINDIR=$HOME/bin
 CONFIG_FILE=$HOME/.huerc
 
 do_install() {
-    [ -d $BINDIR ]      || mkdir $BINDIR
-    [ -e $BINDIR/hue ]  || ln -s $PWD/hue $BINDIR/hue
-    [ -x $BINDIR/hue ]  || chmod +x $BINDIR/hue
-    [ -e $CONFIG_FILE ] || ln -s $PWD/huerc $CONFIG_FILE
+  [ -d $BINDIR ]      || mkdir $BINDIR
+  [ -e $BINDIR/hue ]  || ln -s $PWD/hue $BINDIR/hue
+  [ -x $BINDIR/hue ]  || chmod +x $BINDIR/hue
+  [ -e $CONFIG_FILE ] || ln -s $PWD/huerc $CONFIG_FILE
 }
 
 do_uninstall() {
-    [ -e $BINDIR/hue ]  && rm $BINDIR/hue
-    [ -e $CONFIG_FILE ] && rm $CONFIG_FILE
+  [ -e $BINDIR/hue ]  && rm $BINDIR/hue
+  [ -e $CONFIG_FILE ] && rm $CONFIG_FILE
 }
 
 action=do_install
 while getopts 'u' opt; do
-    case $opt in
-        u)
-            action=do_uninstall
-            ;;
-        *)
-            ;;
-    esac
+  case $opt in
+    u)
+      action=do_uninstall
+      ;;
+    *)
+      ;;
+  esac
 done
 
 shift $((OPTIND - 1))

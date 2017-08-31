@@ -3,28 +3,28 @@
 set -e
 
 usage() {
-    cat <<EOF
+  cat <<EOF
 Usage: `basename $0` [profile] [-c config] [-n name] [-l]
 EOF
-    exit 1
+  exit 1
 }
 
 die() {
-    local msg=$1
-    echo "$msg" >&2
-    exit 1
+  local msg=$1
+  echo "$msg" >&2
+  exit 1
 }
 
 start_or_attach() {
-    local tmuxp=$1
-    local config=$2
+  local tmuxp=$1
+  local config=$2
 
-    $tmuxp load -y $config
+  $tmuxp load -y $config
 }
 
 list_profiles() {
-    local dir=$1
-    ls -1 $dir/*.json | sed -e 's|^.*/||' -e 's/\.json$//'
+  local dir=$1
+  ls -1 $dir/*.json | sed -e 's|^.*/||' -e 's/\.json$//'
 }
 
 tmuxp=$(which tmuxp)
@@ -34,21 +34,21 @@ config_dir=$HOME/.tmuxp
 session_name=$(basename $PWD)
 
 while getopts 'c:n:hl' opt; do
-    case $opt in
-        c)
-            config_dir=$OPTARG
-            ;;
-        n)
-            session_name=$OPTARG
-            ;;
-        l)
-            list_profiles $config_dir
-            exit
-            ;;
-        h|*)
-            usage
-            ;;
-    esac
+  case $opt in
+    c)
+      config_dir=$OPTARG
+      ;;
+    n)
+      session_name=$OPTARG
+      ;;
+    l)
+      list_profiles $config_dir
+      exit
+      ;;
+    h|*)
+      usage
+      ;;
+  esac
 done
 
 shift $((OPTIND - 1))
@@ -58,7 +58,7 @@ profile="${1:-default}"
 config="$config_dir/$profile.json"
 
 if [ -n "$session_name" ]; then
-    export SESSION_NAME="$session_name"
+  export SESSION_NAME="$session_name"
 fi
 
 [ -d "$config_dir" ] || die "Configuration directory $config_dir does not exist"

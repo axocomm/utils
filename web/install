@@ -5,24 +5,24 @@ set -exu
 BINDIR=$HOME/bin
 
 do_install() {
-    [ -d $BINDIR ]     || mkdir $BINDIR
-    [ -e $BINDIR/web ] || ln -s $PWD/web $BINDIR/web
-    [ -x $BINDIR/web ] || chmod +x $BINDIR/web
+  [ -d $BINDIR ]     || mkdir $BINDIR
+  [ -e $BINDIR/web ] || ln -s $PWD/web $BINDIR/web
+  [ -x $BINDIR/web ] || chmod +x $BINDIR/web
 }
 
 do_uninstall() {
-    [ -e $BINDIR/web ] && rm $BINDIR/web
+  [ -e $BINDIR/web ] && rm $BINDIR/web
 }
 
 action=do_install
 while getopts 'u' opt; do
-    case $opt in
-        u)
-            action=do_uninstall
-            ;;
-        *)
-            ;;
-    esac
+  case $opt in
+    u)
+      action=do_uninstall
+      ;;
+    *)
+      ;;
+  esac
 done
 
 shift $((OPTIND - 1))

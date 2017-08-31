@@ -5,26 +5,26 @@ set -exu
 BINDIR=$HOME/bin
 
 do_install() {
-    [ -d $BINDIR ]      || mkdir $BINDIR
-    [ -e $BINDIR/nt ]   || ln -s $PWD/nt $BINDIR/nt
-    [ -x $BINDIR/nt ]   || chmod +x $BINDIR/nt
-    [ -e $HOME/.tmuxp ] || ln -s $PWD/.tmuxp $HOME/.tmuxp
+  [ -d $BINDIR ]      || mkdir $BINDIR
+  [ -e $BINDIR/nt ]   || ln -s $PWD/nt $BINDIR/nt
+  [ -x $BINDIR/nt ]   || chmod +x $BINDIR/nt
+  [ -e $HOME/.tmuxp ] || ln -s $PWD/.tmuxp $HOME/.tmuxp
 }
 
 do_uninstall() {
-    [ -e $BINDIR/nt ]   && rm $BINDIR/nt
-    [ -e $HOME/.tmuxp ] && rm $HOME/.tmuxp
+  [ -e $BINDIR/nt ]   && rm $BINDIR/nt
+  [ -e $HOME/.tmuxp ] && rm $HOME/.tmuxp
 }
 
 action=do_install
 while getopts 'u' opt; do
-    case $opt in
-        u)
-            action=do_uninstall
-            ;;
-        *)
-            ;;
-    esac
+  case $opt in
+    u)
+      action=do_uninstall
+      ;;
+    *)
+      ;;
+  esac
 done
 
 shift $((OPTIND - 1))
