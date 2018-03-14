@@ -8,7 +8,7 @@ do_install() {
   [ -d $BINDIR ]    || mkdir $BINDIR
   [ -e $BINDIR/gp ] || ln -s $PWD/gp.rb $BINDIR/gp
   [ -x $BINDIR/gp ] || chmod +x $BINDIR/gp
-  [ -e $HOME/.gp ]  || ln -s $PWD/gp $HOME/.gp
+  [ -e $HOME/.gp ]  || ln -s $PWD/profiles $HOME/.gp
 }
 
 do_uninstall() {
