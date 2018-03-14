@@ -8,7 +8,9 @@ PROFILE_DIR = "#{Dir.home}/.gp"
 LIST_LINE_RE = /^([a-z_]+) = (.*)$/
 
 def profiles(profile_dir)
-  Dir.glob("#{profile_dir}/*.yaml").map { |f| File.basename f, '.yaml' }
+  Dir.glob("#{profile_dir}/*.yaml")
+    .map { |f| File.basename f, '.yaml' }
+    .reject { |f| f == 'example' }
 end
 
 def list_profiles(profile_dir)
