@@ -1,0 +1,34 @@
+#!/bin/bash
+
+set -exu
+
+BINDIR=$HOME/bin
+
+do_install() {
+  [ -d $BINDIR ]    || mkdir $BINDIR
+  [ -e $BINDIR/gp ] || ln -s $PWD/gp.rb $BINDIR/gp
+  [ -x $BINDIR/gp ] || chmod +x $BINDIR/gp
+  [ -e $HOME/.gp ]  || ln -s $PWD/profiles $HOME/.gp
+}
+
+do_uninstall() {
+  [ -e $BINDIR/gp ] && rm $BINDIR/gp
+  [ -e $HOME/.gp ]  && rm $HOME/.gp
+}
+
+action=do_install
+while getopts 'u' opt; do
+  case $opt in
+    u)
+      action=do_uninstall
+      ;;
+    *)
+      ;;
+  esac
+done
+
+shift $((OPTIND - 1))
+
+$action
+
+exit $?
