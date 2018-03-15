@@ -22,7 +22,7 @@ comment_hosts() {
 
   sed_cmd="$(printf '/# %s$/ s/^/# /g' "$label")"
   [ $VERBOSE ] && echo "Commenting hosts in $file with $sed_cmd"
-  sed -i '.orig' "$sed_cmd" "$file"
+  sed -i.orig "$sed_cmd" "$file"
 }
 
 uncomment_hosts() {
@@ -32,7 +32,7 @@ uncomment_hosts() {
 
   sed_cmd="$(printf '/# %s$/ s/^# //g' "$label")"
   [ $VERBOSE ] && echo "Uncommenting hosts in $file with $sed_cmd"
-  sed -i '.orig' "$sed_cmd" "$file"
+  sed -i.orig "$sed_cmd" "$file"
 }
 
 get_fn() {
