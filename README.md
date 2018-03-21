@@ -1,13 +1,31 @@
 # utils
 
-This is just a collection of a few command line utilities that might be useful.
+This is just a couple random command line utilities that were written
+for a few very specific needs. They probably aren't quite complete or
+pretty, but they should get some attention every once in a while.
 
-- `hue` -- command line utility for controlling Hue lightbulbs
-- `lan-hosts` -- a script to enable and disable `/etc/hosts` entries
-- `nt` -- a script that starts a named tmux session with a set of preconfigured windows
-- `pktg` -- get package status for specified packages (just USPS and DHL for now)
-- `ssh-config` -- just generates a JSON blob of your `~/.ssh/config` if you ever have the need
-- `web` -- spin up a named Docker container running Nginx in the current directory
+- `hue`
+
+    A command line utility for controlling Hue lightbulbs
+
+- `lan-hosts`
+
+    A script to enable and disable `/etc/hosts` entries
+
+- `nt`
+
+    A script that starts a named tmux session with a set of
+    preconfigured windows
+
+- `ssh-config`
+
+    Just generates a JSON blob of your `~/.ssh/config` if you ever
+    have the need
+
+- `web`
+
+    Start up a named Docker container running Nginx in the current
+    directory
 
 Some contain `install` scripts that should be able to get them
-setup. Just make sure `~/bin` is in your `$PATH`.
+set up. Just make sure `~/bin` is in your `$PATH`.

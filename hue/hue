@@ -1,10 +1,10 @@
 #!/bin/bash
 
-source $HOME/.huerc
+source "$HOME/.huerc"
 
 usage() {
   cat <<EOF
-Usage: `basename $0` [-h host] [-u username] command [options]
+Usage: $(basename "$0") [-h host] [-u username] command [options]
 
 Commands:
     status
@@ -21,32 +21,36 @@ EOF
 
 die() {
   local msg="$1"
-  echo $msg >&2
+  echo "$msg" >&2
   exit 1
 }
 
 api_url() {
   local suffix="$1"
-  printf 'http://%s/api/%s/%s' $HOST $USERNAME $suffix
+  printf 'http://%s/api/%s/%s' "$HOST" "$USERNAME" "$suffix"
 }
 
 get_status() {
   local light="$1"
   local suffix='lights'
   [[ -n "$light" ]] && suffix="${suffix}/${light}"
-  curl --silent `api_url $suffix` | jq .
+  curl --silent "$(api_url "$suffix")" | jq .
 }
 
 get_power() {
   local light="$1"
-  local url="$(api_url lights/$light)"
-  curl --silent $url | jq .state.on
+  local url
+
+  url=$(api_url "lights/${light}")
+  curl --silent "$url" | jq .state.on
 }
 
 set_power() {
   local light="$1"
   local state="$2"
-  local url="$(api_url lights/$light/state)"
+  local url
+
+  url=$(api_url "lights/${light}/state")
 
   case $state in
     on)
@@ -60,7 +64,7 @@ set_power() {
       ;;
   esac
 
-  curl --silent -XPUT -d "$data" $url
+  curl --silent -XPUT -d "$data" "$url"
 }
 
 get_scene() {
@@ -71,22 +75,26 @@ get_scene() {
 set_scene() {
   local light="$1"
   local bri="${2:-254}"
-  local url="$(api_url lights/$light/state)"
+  local url
+
+  url=$(api_url "lights/${light}/state")
 
   local data="{\"on\": true, \"bri\": $bri}"
-  curl --silent -XPUT -d "$data" $url
+  curl --silent -XPUT -d "$data" "$url"
 }
 
 run_script() {
   local script="$1"
 
-  local realpath=$(dirname $(readlink $0))
+  local realpath
+
+  realpath=$(dirname "$(readlink "$0")")
   local script_dir=$realpath/scripts
   local script_file=$script_dir/${script}.hue
   [[ -e "$script_file" ]] || die "Script $script doesn't exist"
 
   local runhue=$realpath/runhue
-  $runhue < $script_file
+  $runhue < "$script_file"
 }
 
 while getopts 'u:h:' opt; do
@@ -109,16 +117,16 @@ command="${1:-status}"
 shift
 case $command in
   status)
-    get_status $1
+    get_status "$1"
     ;;
   power)
     light="$1"
     state="$2"
     [[ -n "$light" ]] || die 'Missing required light parameter'
     if [ -z "$state" ]; then
-      get_power $light
+      get_power "$light"
     else
-      set_power $light $state
+      set_power "$light" "$state"
     fi
     ;;
   scene)
@@ -126,16 +134,16 @@ case $command in
     bri="$2"
     [[ -n "$light" ]] || die 'Missing required light parameter'
     if [ -z "$bri" ]; then
-      get_scene $light
+      get_scene "$light"
     else
-      set_scene $light $bri
+      set_scene "$light" "$bri"
     fi
     ;;
   run)
     script="$1"
     [[ -n "$script" ]] || die 'Missing script parameter'
 
-    run_script $script
+    run_script "$script"
     ;;
   *)
     usage

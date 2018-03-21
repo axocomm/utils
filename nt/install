@@ -5,15 +5,15 @@ set -exu
 BINDIR=$HOME/bin
 
 do_install() {
-  [ -d $BINDIR ]      || mkdir $BINDIR
-  [ -e $BINDIR/nt ]   || ln -s $PWD/nt $BINDIR/nt
-  [ -x $BINDIR/nt ]   || chmod +x $BINDIR/nt
-  [ -e $HOME/.tmuxp ] || ln -s $PWD/.tmuxp $HOME/.tmuxp
+  [ -d "$BINDIR" ]      || mkdir "$BINDIR"
+  [ -e "$BINDIR/nt" ]   || ln -s "$PWD/nt" "$BINDIR/nt"
+  [ -x "$BINDIR/nt" ]   || chmod +x "$BINDIR/nt"
+  [ -e "$HOME/.tmuxp" ] || ln -s "$PWD/profiles" "$HOME/.tmuxp"
 }
 
 do_uninstall() {
-  [ -e $BINDIR/nt ]   && rm $BINDIR/nt
-  [ -e $HOME/.tmuxp ] && rm $HOME/.tmuxp
+  [ -e "$BINDIR/nt" ]   && rm "$BINDIR/nt"
+  [ -e "$HOME/.tmuxp" ] && rm "$HOME/.tmuxp"
 }
 
 action=do_install

@@ -4,7 +4,7 @@ set -e
 
 usage() {
   cat <<EOF
-Usage: `basename $0` [profile] [-c config] [-n name] [-l]
+Usage: $(basename "$0") [profile] [-c config] [-n name] [-l]
 EOF
   exit 1
 }
@@ -19,19 +19,18 @@ start_or_attach() {
   local tmuxp=$1
   local config=$2
 
-  $tmuxp load -y $config
+  $tmuxp load -y "$config"
 }
 
 list_profiles() {
-  local dir=$1
-  ls -1 $dir/*.json | sed -e 's|^.*/||' -e 's/\.json$//'
+  find -L "$1" -name '*.json' | sed -e 's|^.*/||' -e 's/\.json$//'
 }
 
 tmuxp=$(which tmuxp)
-[ -n "$tmuxp" -a -x "$tmuxp" ] || die 'tmuxp was not found'
+[ -n "$tmuxp" ] && [ -x "$tmuxp" ] || die 'tmuxp not found or not executable'
 
 config_dir=$HOME/.tmuxp
-session_name=$(basename $PWD)
+session_name=$(basename "$PWD")
 
 while getopts 'c:n:hl' opt; do
   case $opt in
@@ -42,7 +41,7 @@ while getopts 'c:n:hl' opt; do
       session_name=$OPTARG
       ;;
     l)
-      list_profiles $config_dir
+      list_profiles "$config_dir"
       exit
       ;;
     h|*)
@@ -65,6 +64,6 @@ fi
 [ -e "$config" ] || die "Could not find profile $profile"
 [ -z "$TMUX" ] || die 'Already in a tmux session'
 
-start_or_attach $tmuxp $config
+start_or_attach "$tmuxp" "$config"
 
 exit
