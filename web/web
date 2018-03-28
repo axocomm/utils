@@ -4,6 +4,7 @@ set -eu
 
 HOST_PORT=8080
 ACTION=run_web
+PRIVILEGED=${PRIVILEGED:-1}
 
 usage() {
   cat <<EOF
@@ -14,12 +15,11 @@ EOF
 
 run_web() {
   local name="${1}-web"
-  docker run \
-         -d \
-         -p "$HOST_PORT:80" \
-         -v "$PWD:/usr/share/nginx/html" \
-         --name "$name" \
-         nginx
+
+  opts=(-d -p "$HOST_PORT:80" -v "$PWD:/usr/share/nginx/html" --name "$name")
+  [ "$PRIVILEGED" != 'false' ] && opts+=(--privileged)
+
+  docker run "${opts[@]}" nginx
 }
 
 stop_web() {
