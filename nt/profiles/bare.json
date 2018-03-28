@@ -1,0 +1,10 @@
+{
+  "session_name": "${SESSION_NAME}",
+  "windows": [
+    {
+      "window_name": "session",
+      "panes": [null],
+      "window_index": 0
+    }
+  ]
+}
