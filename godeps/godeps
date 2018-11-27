@@ -1,0 +1,21 @@
+#!/bin/bash
+
+. "$(dirname $(readlink -f "$0"))/common"
+
+GODEPS="${GODEPS:-$PWD/go.deps}"
+
+_read_deps() {
+  grep -vE '^\s*(#.*)?$' "$GODEPS" | \
+    while read -r dep; do
+      log_info "Installing $dep"
+      go get -u "$dep"
+    done
+
+  log_success 'Done!'
+}
+
+[[ -f "$GODEPS" ]] || die "Missing $GODEPS"
+
+_read_deps
+
+exit $?
