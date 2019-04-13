@@ -1,21 +1,32 @@
 #!/bin/bash
 
-. "$(dirname $(readlink -f "$0"))/common"
+_readlink_f() {
+  if [[ "$(uname)" == 'Darwin' ]]; then
+    greadlink -f "$@"
+  else
+    readlink -f "$@"
+  fi
+}
+
+. "$(dirname $(_readlink_f "$0"))/common"
 
 GODEPS="${GODEPS:-$PWD/go.deps}"
 
 _read_deps() {
-  grep -vE '^\s*(#.*)?$' "$GODEPS" | \
-    while read -r dep; do
-      log_info "Installing $dep"
-      go get -u "$dep"
-    done
+  grep -vE '^\s*(#.*)?$' "$GODEPS"
+}
+
+_install_deps() {
+  _read_deps | while read -r dep; do
+    log_info "Installing $dep"
+    go get -u "$dep"
+  done
 
   log_success 'Done!'
 }
 
 [[ -f "$GODEPS" ]] || die "Missing $GODEPS"
 
-_read_deps
+_install_deps
 
 exit $?
