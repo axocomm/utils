@@ -23,11 +23,11 @@ start_or_attach() {
 }
 
 list_profiles() {
-  find -L "$1" -name '*.json' | sed -e 's|^.*/||' -e 's/\.json$//'
+  find -L "$1" -name '*.json' -exec basename {} .json \;
 }
 
-tmuxp=$(which tmuxp)
-[ -n "$tmuxp" ] && [ -x "$tmuxp" ] || die 'tmuxp not found or not executable'
+tmuxp=$(command -v tmuxp)
+[ -x "$tmuxp" ] || die 'tmuxp not found or not executable'
 
 config_dir=$HOME/.tmuxp
 session_name=$(basename "$PWD")
